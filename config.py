@@ -1,4 +1,9 @@
+import os
+
 def can_build(env, platform):
+	if os.path.isfile("modules/godotsteam/sdk/put SDK here"):
+		print("Missing Steamworks SDK. Please add it to sdk/")
+		return False
 	return platform=="linuxbsd" or platform=="windows" or platform=="macos" or platform=="server"
 
 def configure(env):
