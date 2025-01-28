@@ -246,7 +246,7 @@
 			<param index="1" name="video_id" type="String" />
 			<description>
 				Adds an additional video preview from YouTube for the item.
-				[b]Note:[/b] This must be set before you submit the UGC update handle using [submitItemUpdate](/functions/ugc/#submititemupdate).
+				[b]Note:[/b] This must be set before you submit the UGC update handle using [method Steam.submitItemUpdate](/functions/ugc/#submititemupdate).
 			</description>
 		</method>
 		<method name="addItemToFavorites">
@@ -377,19 +377,6 @@
 				Adds a screenshot to the user's Steam screenshot library from disk.
 			</description>
 		</method>
-		<method name="addTimelineEvent">
-			<return type="void" />
-			<param index="0" name="icon" type="String" />
-			<param index="1" name="title" type="String" />
-			<param index="2" name="description" type="String" />
-			<param index="3" name="priority" type="int" />
-			<param index="4" name="start_offet" type="float" />
-			<param index="5" name="duration" type="float" />
-			<param index="6" name="possible_clip" type="int" enum="TimelineEventClipPriority" />
-			<description>
-				Use this to mark an event on the Timeline. The event can be instantaneous or take some amount of time to complete, depending on the value passed in duration.
-			</description>
-		</method>
 		<method name="addVRScreenshotToLibrary">
 			<return type="int" />
 			<param index="0" name="type" type="int" enum="VRScreenshotType" />
@@ -435,7 +422,7 @@
 			<description>
 				If no this_leaderboard is passed, then the function will use the last internally-stored handle.
 				Attaches a piece of user generated content the current user's entry on a leaderboard.
-				This content could be a replay of the user achieving the score or a ghost to race against. The attached handle will be available when the entry is retrieved and can be accessed by other users using [method Steam.getDownloadedLeaderboardEntry]. To create and download user generated content see the documentation for the Steam Workshop.
+				This content could be a replay of the user achieving the score or a ghost to race against. To create and download user generated content see the documentation for the Steam Workshop.
 				Once attached, the content will be available even if the underlying Cloud file is changed or deleted by the user.
 				You must call [method Steam.findLeaderboard] or [method Steam.findOrCreateLeaderboard] to get a leaderboard handle prior to calling this function.
 				Triggers a [signal Steam.leaderboard_ugc_set] callback.
@@ -519,6 +506,12 @@
 				Triggers a [signal Steam.change_num_open_slots] call result.
 			</description>
 		</method>
+		<method name="checkFileSignature">
+			<return type="void" />
+			<param index="0" name="file_name" type="String" />
+			<description>
+			</description>
+		</method>
 		<method name="checkPingDataUpToDate">
 			<return type="bool" />
 			<param index="0" name="max_age_in_seconds" type="float" />
@@ -543,7 +536,6 @@
 			<description>
 				Resets the unlock status of an achievement.
 				This is primarily only ever used for testing.
-				You must have called [method Steam.requestCurrentStats] and it needs to return successfully via its callback prior to calling this.
 				This call only modifies Steam's in-memory state so it is quite cheap. To send the unlock status to the server and to trigger the Steam overlay notification you must call [method Steam.storeStats].
 			</description>
 		</method>
@@ -636,7 +628,7 @@
 			<param index="0" name="ip_address_with_port" type="String" />
 			<param index="1" name="options" type="Dictionary" />
 			<description>
-				Begin connecting to a server listen socket that is identified using an [ip-address]:[port], i.e. 127.0.0.1:27015. Used with [method Steam.createListenSocketIP].
+				Begin connecting to a server listen socket that is identified using an ip-address:port, i.e. 127.0.0.1:27015. Used with [method Steam.createListenSocketIP].
 			</description>
 		</method>
 		<method name="connectP2P">
@@ -968,7 +960,7 @@
 			<return type="bool" />
 			<param index="0" name="poll_group" type="int" />
 			<description>
-				Destroy a poll group created with [signal Steam.createPollGroup].
+				Destroy a poll group created with [method Steam.createPollGroup].
 				If there are any connections in the poll group, they are removed from the group, and left in a state where they are not part of any poll group. Returns false if passed an invalid poll group handle.
 			</description>
 		</method>
@@ -1389,7 +1381,7 @@
 			<param index="0" name="achievement_name" type="String" />
 			<description>
 				Gets the unlock status of the Achievement.
-				The equivalent function for other users is [getUserAchievement].
+				The equivalent function for other users is [method getUserAchievement].
 				The returned dictionary contains the following keys:
 				[codeblock]
 				┠╴ret (bool)
@@ -1417,7 +1409,7 @@
 				Gets the achievement status, and the time it was unlocked if unlocked.
 				If the return value is true, but the unlock time is zero, that means it was unlocked before Steam began tracking achievement unlock times (December 2009). The time is provided in Unix epoch format, seconds since January 1, 1970 UTC.
 				The equivalent function for other users is [method Steam.getUserAchievementAndUnlockTime].
-				[codeblock]
+				[codeblock lang=text]
 				The returning dictionary contains the following keys:
 				┠╴retrieve (bool)
 				┠╴achieved (bool)
@@ -1597,7 +1589,7 @@
 			<description>
 				Retrieve an authentication ticket to be sent to the entity who wishes to authenticate you.
 				After calling this you can send the ticket to the entity where they can then call [method Steam.beginAuthSession] to verify this entities integrity.
-				When creating a ticket for use by the [method Steam.authenticateUserTicket] Web API, the calling application should wait for the [signal Steam.get_auth_session_ticket_response] callback generated by the API call before attempting to use the ticket to ensure that the ticket has been communicated to the server. If this callback does not come in a timely fashion (10 - 20 seconds), then your client is not connected to Steam, and the [method Steam.authenticateUserTicket] call will fail because it can not authenticate the user.
+				When creating a ticket, the calling application should wait for the [signal Steam.get_auth_session_ticket_response] callback generated by the API call before attempting to use the ticket to ensure that the ticket has been communicated to the server. If this callback does not come in a timely fashion (10 - 20 seconds), then your client is not connected to Steam.
 				Triggers a [signal Steam.get_auth_session_ticket_response] callback.
 				[codeblock]
 				The returned dictionary contains the following keys:
@@ -1614,7 +1606,7 @@
 			<description>
 				Request a ticket which will be used for webapi "ISteamUserAuth\AuthenticateUserTicket"; [b]service_identity[/b] is an optional input parameter to identify the service the ticket will be sent to the ticket will be returned in callback [signal Steam.get_ticket_for_web_api].
 				Triggers a [signal Steam.get_ticket_for_web_api] callback.
-				[b]Note:[/b] The [code]service_identity[/code] is not a network identity used by or created with GodotSteam's Networking Tools class.
+				[b]Note:[/b] The [b]service_identity[/b] is not a network identity used by or created with GodotSteam's Networking Tools class.
 			</description>
 		</method>
 		<method name="getAuthenticationStatus">
@@ -1646,7 +1638,7 @@
 			<return type="int" />
 			<param index="0" name="channel" type="int" default="0" />
 			<description>
-				Calls [method Steam.isP2PPacketAvailable] under the hood, returns the size of the available packet or zero if there is no such packet.
+				Calls isP2PPacketAvailable under the hood, returns the size of the available packet or zero if there is no such packet.
 			</description>
 		</method>
 		<method name="getAvailableVoice">
@@ -1665,7 +1657,7 @@
 			<return type="int" />
 			<param index="0" name="index" type="int" />
 			<description>
-				Use with [method Steam.getNumActiveBeacons] to iterate the active beacons visible to the current user. Argument [index is a zero-based index, so iterate over the range [0, getNumActiveBeacons() - 1]. The return is a beacon_id that can be used with [method Steam.getBeaconDetails] to get information about the beacons suitable for display to the user.
+				Use with [method Steam.getNumActiveBeacons] to iterate the active beacons visible to the current user. Argument index is a zero-based index, so iterate over the range (0, getNumActiveBeacons() - 1). The return is a beacon_id that can be used with [method Steam.getBeaconDetails] to get information about the beacons suitable for display to the user.
 			</description>
 		</method>
 		<method name="getBeaconDetails">
@@ -1867,25 +1859,25 @@
 				The returned dictionary contains the following keys:
 				[codeblock]
 				┠╴connection_status (dictionary)
-					┠╴state (int)
-					┠╴ping (int)
-					┠╴local_quality (float)
-					┠╴remote_quality (float)
-					┠╴packets_out_per_second (float)
-					┠╴bytes_out_per_second (float)
-					┠╴packets_in_per_second (float)
-					┠╴bytes_in_per_second (float)
-					┠╴send_rate (int)
-					┠╴pending_unreliable (int)
-					┠╴pending_reliable (int)
-					┠╴send_unacknowledged_reliable (int)
-					┖╴queue_time (int)
+				    ┠╴state (int)
+				    ┠╴ping (int)
+				    ┠╴local_quality (float)
+				    ┠╴remote_quality (float)
+				    ┠╴packets_out_per_second (float)
+				    ┠╴bytes_out_per_second (float)
+				    ┠╴packets_in_per_second (float)
+				    ┠╴bytes_in_per_second (float)
+				    ┠╴send_rate (int)
+				    ┠╴pending_unreliable (int)
+				    ┠╴pending_reliable (int)
+				    ┠╴send_unacknowledged_reliable (int)
+				    ┖╴queue_time (int)
 				┖╴lanes_status (array)
-					┖╴lane_status (dictionary)
-						┠╴pending_unreliable (int)
-						┠╴pending_reliable (int)
-						┠╴sent_unacknowledged_reliable (int)
-						┖╴queue_time (int)
+				    ┖╴lane_status (dictionary)
+				        ┠╴pending_unreliable (int)
+				        ┠╴pending_reliable (int)
+				        ┠╴sent_unacknowledged_reliable (int)
+				        ┖╴queue_time (int)
 				[/codeblock]
 			</description>
 		</method>
@@ -1954,9 +1946,9 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴dlc (dictionary)
-					┠╴app_id (int)
-					┠╴available (bool)
-					┖╴name (string)
+				    ┠╴app_id (int)
+				    ┠╴available (bool)
+				    ┖╴name (string)
 				[/codeblock]
 			</description>
 		</method>
@@ -2067,7 +2059,7 @@
 			<description>
 				Retrieve an encrypted ticket.
 				This should be called after requesting an encrypted app ticket with [method Steam.requestEncryptedAppTicket] and receiving the [signal Steam.encrypted_app_ticket_response] call result.
-				You should then pass this encrypted ticket to your secure servers to be decrypted using your secret key using [method Steam.decryptTicket].
+				You should then pass this encrypted ticket to your secure servers to be decrypted using your secret key.
 				The returned dictionary contains the following keys:
 				[codeblock]
 				┠╴buffer (PackedByteArray)
@@ -2098,15 +2090,14 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴favorite (dictionary)
-					┠╴ret (bool)
-					┠╴app (int)
-					┠╴ip (string)
-					┠╴game_port (int)
-					┠╴query_port (int)
-					┠╴flags (int)
-					┖╴last_played (int)
+				    ┠╴ret (bool)
+				    ┠╴app (int)
+				    ┠╴ip (string)
+				    ┠╴game_port (int)
+				    ┠╴query_port (int)
+				    ┠╴flags (int)
+				    ┖╴last_played (int)
 				[/codeblock]
-				[b]Note:[/b] You must call [method Steam.getFavoriteGameCount] before calling this. This is already used in GodotSteam's implementation, however.
 			</description>
 		</method>
 		<method name="getFileCount">
@@ -2121,7 +2112,7 @@
 			<param index="0" name="filename" type="String" />
 			<description>
 				Asynchronously retrieves metadata details about a specific file in the depot manifest.
-				[b]Note:[/b] Triggers a [signal Steam.file_details_result callback].
+				[b]Note:[/b] Triggers a [signal Steam.file_details_result].
 			</description>
 		</method>
 		<method name="getFileNameAndSize">
@@ -2385,7 +2376,7 @@
 			<param index="0" name="stat_name" type="String" />
 			<description>
 				Gets the daily history for an aggregated stat.
-				Array[0] will be today, Array[1] will be yesterday, and Array[2] will be two days ago, etc.
+				Array.0 will be today, Array.1 will be yesterday, and Array.2 will be two days ago, etc.
 				You must have called [method Steam.requestGlobalStats] and it needs to return successfully via its callback prior to calling this.
 			</description>
 		</method>
@@ -2402,7 +2393,7 @@
 			<param index="0" name="stat_name" type="String" />
 			<description>
 				Gets the daily history for an aggregated stat.
-				Array[0] will be today, Array[1] will be yesterday, and Array[2] will be two days ago, etc.
+				Array.0 will be today, Array.1 will be yesterday, and Array.2 will be two days ago, etc.
 				You must have called [method Steam.requestGlobalStats] and it needs to return successfully via its callback prior to calling this.
 			</description>
 		</method>
@@ -2809,7 +2800,7 @@
 			<param index="0" name="file" type="int" />
 			<description>
 				After calling [method Steam.getLocalFileChangeCount], use this method to iterate over the changes. The changes described have already been made to local files. Your application should take appropriate action to reload state from disk, and possibly notify the user.
-				For example: The local system had been suspended, during which time the user played elsewhere and uploaded changes to the Steam Cloud. On resume, Steam downloads those changes to the local system before resuming the application. The application receives an [method Steam.local_file_changed], and uses [method Steam.getLocalFileChangeCount], and [method Steam.getLocalFileChange] to iterate those changes. Depending on the application structure and the nature of the changes, the application could:
+				For example: The local system had been suspended, during which time the user played elsewhere and uploaded changes to the Steam Cloud. On resume, Steam downloads those changes to the local system before resuming the application. The application receives an [signal Steam.local_file_changed], and uses [method Steam.getLocalFileChangeCount], and [method Steam.getLocalFileChange] to iterate those changes. Depending on the application structure and the nature of the changes, the application could:
 				• Re-load game progress to resume at exactly the point where the user was when they exited the game on the other device
 				• Notify the user of any synchronized changes that don't require reloading
 				• Etc.
@@ -2833,7 +2824,7 @@
 			<return type="Dictionary" />
 			<description>
 				Return location info for the current host. Returns the approximate age of the data, in seconds, or -1 if no data is available. You can use this value in [method Steam.checkPingDataUpToDate].
-				It takes a few seconds to initialize access to the relay network. If you call this very soon after calling [method Steam.initializeRelayNetworkAccess], the data may not be available yet.
+				It takes a few seconds to initialize access to the relay network.
 				This always return the most up-to-date information we have available right now, even if we are in the middle of re-calculating ping times.
 				The returned dictionary contains the following keys:
 				[codeblock]
@@ -3180,7 +3171,7 @@
 			<description>
 				Retrieve the developer set metadata of an individual workshop item after receiving a querying UGC call result.
 				You should call this in a loop to get the details of all the workshop items returned.
-				[b]Note:[/b] This must only be called with the handle obtained from a successful [method Steam.ugc_query_completed] call result.
+				[b]Note:[/b] This must only be called with the handle obtained from a successful [signal Steam.ugc_query_completed] call result.
 			</description>
 		</method>
 		<method name="getQueryUGCNumAdditionalPreviews">
@@ -3322,10 +3313,10 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴player (dictionary)
-					┠╴id (int) as friend Steam ID.
-					┠╴name (string)
-					┠╴time (int)
-					┖╴status (int)
+				    ┠╴id (int) as friend Steam ID.
+				    ┠╴name (string)
+				    ┠╴time (int)
+				    ┖╴status (int)
 				[/codeblock]
 				[b]Note:[/b] This is a unique function to GodotSteam.
 			</description>
@@ -3548,8 +3539,7 @@
 			<param index="0" name="stat_name" type="String" />
 			<description>
 				Gets the current value of the a stat for the current user.
-				You must have called [method Steam.requestCurrentStats] and it needs to return successfully via its callback prior to calling this.
-				To receive stats for other users use [method Steam.getUserStat].
+				To receive stats for other users use [method Steam.getUserStatFloat] or [method Steam.getUserStatInt].
 			</description>
 		</method>
 		<method name="getStatInt">
@@ -3557,8 +3547,7 @@
 			<param index="0" name="stat_name" type="String" />
 			<description>
 				Gets the current value of the a stat for the current user.
-				You must have called [method Steam.requestCurrentStats] and it needs to return successfully via its callback prior to calling this.
-				To receive stats for other users use [method Steam.getUserStat].
+				To receive stats for other users use [method Steam.getUserStatFloat] or [method Steam.getUserStatInt].
 			</description>
 		</method>
 		<method name="getSteamID">
@@ -3639,13 +3628,13 @@
 				The returned dictionary contains the following keys:
 				[codeblock]
 				┠╴bitwise (int)
-					• 0 / None
-					• 1&lt;&lt;0 / Windows
-					• 1&lt;&lt;1 / OSX
-					• 1&lt;&lt;2 / PS3
-					• 1&lt;&lt;3 / Linux
-					• 1&lt;&lt;4 / Reserved
-					• 0xffffffff / All
+				    • 0 / None
+				    • 1&lt;&lt;0 / Windows
+				    • 1&lt;&lt;1 / OSX
+				    • 1&lt;&lt;2 / PS3
+				    • 1&lt;&lt;3 / Linux
+				    • 1&lt;&lt;4 / Reserved
+				    • 0xffffffff / All
 				┖╴verbose (string)
 				[/codeblock]
 			</description>
@@ -3724,9 +3713,9 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴tags (dictionary)
-					┠╴id (int) as friend group ID
-					┠╴name (string)
-					┖╴members (int)
+				    ┠╴id (int) as friend group ID
+				    ┠╴name (string)
+				    ┖╴members (int)
 				[/codeblock]
 			</description>
 		</method>
@@ -3762,7 +3751,7 @@
 			<description>
 				Gets the current value of the a stat for the specified user.
 				You must have called [method Steam.requestUserStats] and it needs to return successfully via its callback prior to calling this.
-				The equivalent function for the local user is [method Steam.getStat].
+				The equivalent function for the local user is [method Steam.getStatFloat] or [method Steam.getStatInt].
 			</description>
 		</method>
 		<method name="getUserStatInt">
@@ -3772,7 +3761,7 @@
 			<description>
 				Gets the current value of the a stat for the specified user.
 				You must have called [method Steam.requestUserStats] and it needs to return successfully via its callback prior to calling this.
-				The equivalent function for the local user is [method Steam.getStat].
+				The equivalent function for the local user is [method Steam.getStatInt] or [method Steam.getStatFloat].
 			</description>
 		</method>
 		<method name="getUserSteamFriends">
@@ -3782,9 +3771,9 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴ friends (dictionary)
-					┠╴id (int) as friend Steam ID
-					┠╴name (string)
-					┖╴status (int)
+				    ┠╴id (int) as friend Steam ID
+				    ┠╴name (string)
+				    ┖╴status (int)
 				[/codeblock]
 				[b]Note:[/b] This is a unique function to GodotSteam.
 			</description>
@@ -3796,9 +3785,9 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴groups (dictionary)
-					┠╴id (int) as group ID
-					┠╴name (string)
-					┖╴tag (string)
+				    ┠╴id (int) as group ID
+				    ┠╴name (string)
+				    ┖╴tag (string)
 				[/codeblock]
 				[b]Note:[/b] This is a unique function to GodotSteam.
 			</description>
@@ -3818,7 +3807,7 @@
 				Read captured audio data from the microphone buffer.
 				The compressed data can be transmitted by your application and decoded back into raw audio data using DecompressVoice on the other side. The compressed data provided is in an arbitrary format and is not meant to be played directly.
 				This should be called once per frame, and at worst no more than four times a second to keep the microphone input delay as low as possible. Calling this any less may result in gaps in the returned stream.
-				It is recommended that you pass in an 8 kilobytes or larger destination buffer for compressed audio. Static buffers are recommended for performance reasons. However, if you would like to allocate precisely the right amount of space for a buffer before each call you may use [getAvailableVoice](/functions/users/#getavailablevoice) to find out how much data is available to be read.
+				It is recommended that you pass in an 8 kilobytes or larger destination buffer for compressed audio. Static buffers are recommended for performance reasons. However, if you would like to allocate precisely the right amount of space for a buffer before each call you may use [method getAvailableVoice](/functions/users/#getavailablevoice) to find out how much data is available to be read.
 				The returned dictionary contains the following keys:
 				[codeblock]
 				┠╴result (int)
@@ -3940,7 +3929,7 @@
 			<param index="2" name="max_progress" type="int" />
 			<description>
 				Shows the user a pop-up notification with the current progress of an achievement.
-				Calling this function will not set the progress or unlock the achievement, the game must do that manually by calling [method Steam.setStat].
+				Calling this function will not set the progress or unlock the achievement, the game must do that manually by calling [method Steam.setStatFloat] or [method Steam.setStatInt].
 				Triggers a [signal Steam.user_stats_stored] callback.
 				Triggers a [signal Steam.user_achievement_stored] callback.
 			</description>
@@ -4014,7 +4003,6 @@
 			<param index="0" name="dlc_id" type="int" />
 			<description>
 				Allows you to install an optional DLC.
-				Note: Triggers a [signal Steam.dlc_installed callback].
 			</description>
 		</method>
 		<method name="inviteUserToGame">
@@ -4704,7 +4692,7 @@
 			<description>
 				Reads in a packet that has been sent from another user via [method Steam.sendP2PPacket].
 				This call is not blocking, and will return false if no data is available.
-				Before calling this you should have called [method Steam.getAvailableP2PPacketSize] / [method Steam.isP2PPacketAvailable].
+				Before calling this you should have called [method Steam.getAvailableP2PPacketSize].
 				The returned dictionary contains the following keys:
 				[codeblock]
 				┠╴data (PackedByteArray)
@@ -4721,16 +4709,16 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴messages (dictionary)
-					┠╴payload (PackedByteArray)
-					┠╴size (int)
-					┠╴connection (int)
-					┠╴identity (string)
-					┠╴receiver_user_data (int)
-					┠╴time_received (int)
-					┠╴message_number (int)
-					┠╴channel (int)
-					┠╴flags (int)
-					┖╴sender_user_data (int)
+				    ┠╴payload (PackedByteArray)
+				    ┠╴size (int)
+				    ┠╴connection (int)
+				    ┠╴identity (string)
+				    ┠╴receiver_user_data (int)
+				    ┠╴time_received (int)
+				    ┠╴message_number (int)
+				    ┠╴channel (int)
+				    ┠╴flags (int)
+				    ┖╴sender_user_data (int)
 				[/codeblock]
 			</description>
 		</method>
@@ -4743,16 +4731,16 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴messages (dictionary):
-					┠╴payload (string)
-					┠╴size (int)
-					┠╴connection (int)
-					┠╴identity (string)
-					┠╴receiver_user_data (int)
-					┠╴time_received (int)
-					┠╴message_number (int)
-					┠╴channel (int)
-					┠╴flags (int)
-					┖╴sender_user_data (int)
+				    ┠╴payload (string)
+				    ┠╴size (int)
+				    ┠╴connection (int)
+				    ┠╴identity (string)
+				    ┠╴receiver_user_data (int)
+				    ┠╴time_received (int)
+				    ┠╴message_number (int)
+				    ┠╴channel (int)
+				    ┠╴flags (int)
+				    ┖╴sender_user_data (int)
 				[/codeblock]
 			</description>
 		</method>
@@ -4765,16 +4753,16 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴messages (dictionary):
-					┠╴payload (string)
-					┠╴size (int)
-					┠╴connection (int)
-					┠╴identity (string)
-					┠╴receiver_user_data (int)
-					┠╴time_received (int)
-					┠╴message_number (int)
-					┠╴channel (int)
-					┠╴flags (int)
-					┖╴sender_user_data (int)
+				    ┠╴payload (string)
+				    ┠╴size (int)
+				    ┠╴connection (int)
+				    ┠╴identity (string)
+				    ┠╴receiver_user_data (int)
+				    ┠╴time_received (int)
+				    ┠╴message_number (int)
+				    ┠╴channel (int)
+				    ┠╴flags (int)
+				    ┖╴sender_user_data (int)
 				[/codeblock]
 			</description>
 		</method>
@@ -4788,16 +4776,16 @@
 				The returned array contains a list of:
 				[codeblock]
 				┖╴messages (dictionary):
-					┠╴payload (string)
-					┠╴size (int)
-					┠╴connection (int)
-					┠╴identity (string)
-					┠╴user_data (int)
-					┠╴time_received (int)
-					┠╴message_number (int)
-					┠╴channel (int)
-					┠╴flags (int)
-					┖╴user_data (int)
+				    ┠╴payload (string)
+				    ┠╴size (int)
+				    ┠╴connection (int)
+				    ┠╴identity (string)
+				    ┠╴user_data (int)
+				    ┠╴time_received (int)
+				    ┠╴message_number (int)
+				    ┠╴channel (int)
+				    ┠╴flags (int)
+				    ┖╴user_data (int)
 				[/codeblock]
 			</description>
 		</method>
@@ -4969,21 +4957,12 @@
 				[b]Note:[/b] This won't download avatars for the officers automatically. If no avatar image is available for an officer, then call [method Steam.requestUserInformation] to download the avatar.
 			</description>
 		</method>
-		<method name="requestCurrentStats">
-			<return type="bool" />
-			<description>
-				Asynchronously request the user's current stats and achievements from the server.
-				You must always call this first to get the initial status of stats and achievements. Only after the resulting callback comes back can you start calling the rest of the stats and achievement functions for the current user.
-				The equivalent function for other users is [method Steam.requestUserStats].
-				Triggers a [signal Steam.current_stats_received] callback.
-			</description>
-		</method>
 		<method name="requestEligiblePromoItemDefinitionsIDs">
 			<return type="void" />
 			<param index="0" name="steam_id" type="int" />
 			<description>
 				Request the list of "eligible" promo items that can be manually granted to the given user.
-				These are promo items of type "manual" that won't be granted automatically. An example usage of this is an item that becomes available every week. After calling this function you need to call [method Steam.getEligiblePromoItemDefinitionIDs] to get the actual item definition ids.
+				These are promo items of type "manual" that won't be granted automatically. An example usage of this is an item that becomes available every week.
 				Triggers a [signal Steam.inventory_eligible_promo_item] callback.
 			</description>
 		</method>
@@ -5035,7 +5014,6 @@
 			<return type="void" />
 			<description>
 				Asynchronously fetches global stats data, which is available for stats marked as "aggregated" in the App Admin panel of the Steamworks website.
-				You must have called [method Steam.requestCurrentStats] and it needs to return successfully via its callback prior to calling this.
 				Triggers a [signal Steam.global_achievement_percentages_ready] callback.
 			</description>
 		</method>
@@ -5045,7 +5023,6 @@
 			<description>
 				Asynchronously fetches global stats data, which is available for stats marked as "aggregated" in the App Admin panel of the Steamworks website.
 				The limit is 60.
-				You must have called [method Steam.requestCurrentStats] and it needs to return successfully via its callback prior to calling this.
 				Triggers a [signal Steam.global_stats_received] callback.
 			</description>
 		</method>
@@ -5091,7 +5068,7 @@
 				Get a filtered list of relevant lobbies.
 				There can only be one active lobby search at a time. The old request will be canceled if a new one is started. Depending on the users connection to the Steam back-end, this call can take from 300ms to 5 seconds to complete, and has a timeout of 20 seconds.
 				Triggers a [signal Steam.lobby_match_list] callback.
-				[b]Note:[/b] To filter the results you must call the [method Steam.addRequestLobbyList] functions before calling this. The filters are cleared on each call to this function.
+				[b]Note:[/b] To filter the results you must call the addRequestLobbyList functions before calling this. The filters are cleared on each call to this function.
 				[b]Note:[/b] If [method Steam.addRequestLobbyListDistanceFilter] is not called, k_ELobbyDistanceFilterDefault will be used, which will only find matches in the same or nearby regions.
 				[b]Note:[/b] This will only return lobbies that are not full, and only lobbies that are public (2) or invisible (3), and are set to joinable with [method Steam.setLobbyJoinable].
 			</description>
@@ -5108,7 +5085,7 @@
 		<method name="requestPrices">
 			<return type="void" />
 			<description>
-				Request prices for all item definitions that can be purchased in the user's local currency. A [signal Steam.inventory_request_prices_result] call result will be returned with the user's local currency code. After that, you can call [method Steam.getNumItemsWithPrices] and [method Steam.getItemsWithPrices] to get prices for all the known item definitions, or [method Steam.getItemPrice] for a specific item definition.
+				Request prices for all item definitions that can be purchased in the user's local currency. A [signal Steam.inventory_request_prices_result] call result will be returned with the user's local currency code.
 				Triggers a [signal Steam.inventory_request_prices_result] callback.
 			</description>
 		</method>
@@ -5147,7 +5124,6 @@
 				Asynchronously downloads stats and achievements for the specified user from the server.
 				These stats are not automatically updated; you'll need to call this function again to refresh any data that may have change.
 				To keep from using too much memory, an least recently used cache (LRU) is maintained and other user's stats will occasionally be unloaded. When this happens a [signal Steam.user_stats_unloaded] callback is sent. After receiving this callback the user's stats will be unavailable until this function is called again.
-				The equivalent function for the local user is [method Steam.requestCurrentStats].
 				Triggers a [signal Steam.user_stats_received] callback.
 			</description>
 		</method>
@@ -5156,7 +5132,7 @@
 			<param index="0" name="achievements_too" type="bool" />
 			<description>
 				Resets the current users stats and, optionally achievements.
-				This automatically calls [method Steam.storeStats] to persist the changes to the server. This should typically only be used for testing purposes during development. Ensure that you sync up your stats with the new default values provided by Steam after calling this by calling [method Steam.requestCurrentStats].
+				This automatically calls [method Steam.storeStats] to persist the changes to the server. This should typically only be used for testing purposes during development.
 			</description>
 		</method>
 		<method name="resetIdentity">
@@ -5302,28 +5278,6 @@
 				A note for those familiar with TCP/IP ports, or converting an existing codebase that opened multiple sockets: You might notice that there is only one channel, and with TCP/IP each endpoint has a port number. You can think of the channel number as the destination port. If you need each message to also include a source port (so the recipient can route the reply), then just put that in your message. That is essentially how UDP works!
 			</description>
 		</method>
-		<method name="sendMessages">
-			<return type="Array" />
-			<param index="0" name="data" type="PackedByteArray" />
-			<param index="1" name="connection_handle" type="int" />
-			<param index="2" name="flags" type="int" />
-			<description>
-				Send one or more messages without copying the message payload. This is the most efficient way to send messages.
-				The returned array contains the [b]message number[/b] that was assigned to the message if sending was successful.  If sending failed, then a negative [b]Result value[/b] is placed into the array.  For example, the array will hold RESULT_INVALID_STATE / -k_EResultInvalidState if the connection was in an invalid state.
-				Possible failure codes include:
-				[codeblock]
-				- RESULT_INVALID_PARAM / k_EResultInvalidParam
-					- invalid connection handle, or the individual message is too big; more than MAX_STEAM_PACKET_SIZE / k_cbMaxSteamNetworkingSocketsMessageSizeSend or 512 * 1024.
-				- RESULT_INVALID_STATE / k_EResultInvalidState
-					- Connection is in an invalid state
-				- RESULT_NO_CONNECTION / k_EResultNoConnection
-					- Connection has ended
-				- RESULT_IGNORED / k_EResultIgnored
-					- You used k_nSteamNetworkingSend_NoDelay, and the message was dropped because we were not ready to send it.
-				- RESULT_LIMIT_EXCEEDED / k_EResultLimitExceeded
-				[/codeblock]
-			</description>
-		</method>
 		<method name="sendP2PPacket">
 			<return type="bool" />
 			<param index="0" name="remote_steam_id" type="int" />
@@ -5394,7 +5348,6 @@
 			<param index="0" name="name" type="String" />
 			<description>
 				Unlocks an achievement.
-				You must have called [method Steam.requestCurrentStats] and it needs to return successfully via its callback prior to calling this!
 				You can unlock an achievement multiple times so you don't need to worry about only setting achievements that aren't already set. This call only modifies Steam's in-memory state so it is quite cheap. To send the unlock status to the server and to trigger the Steam overlay notification you must call [method Steam.storeStats].
 			</description>
 		</method>
@@ -5593,7 +5546,7 @@
 			<return type="void" />
 			<param index="0" name="phase_id" type="String" />
 			<description>
-				Games can set a phase ID so they can refer back to a phase in [method Steam.openOverlayToPhase].
+				Games can set a phase ID.
 			</description>
 		</method>
 		<method name="setGlobalConfigValueFloat">
@@ -6209,7 +6162,6 @@
 			<param index="1" name="value" type="float" />
 			<description>
 				Sets / updates the float value of a given stat for the current user.
-				You must have called [method Steam.requestCurrentStats] and it needs to return successfully via its callback prior to calling this!
 				This call only modifies Steam's in-memory state and is very cheap. Doing so allows Steam to persist the changes even in the event of a game crash or unexpected shutdown. To submit the stats to the server you must call [method Steam.storeStats].
 				If this is returning false and everything appears correct, then check to ensure that your changes in the App Admin panel of the Steamworks website are published.
 			</description>
@@ -6220,7 +6172,6 @@
 			<param index="1" name="value" type="int" />
 			<description>
 				Sets / updates the integer value of a given stat for the current user.
-				You must have called [method Steam.requestCurrentStats] and it needs to return successfully via its callback prior to calling this!
 				This call only modifies Steam's in-memory state and is very cheap. Doing so allows Steam to persist the changes even in the event of a game crash or unexpected shutdown. To submit the stats to the server you must call [method Steam.storeStats].
 				If this is returning false and everything appears correct, then check to ensure that your changes in the App Admin panel of the Steamworks website are published.
 			</description>
@@ -6336,7 +6287,7 @@
 				Show the app's latest Workshop EULA to the user in an overlay window, where they can accept it or not.
 			</description>
 		</method>
-			<method name="startGamePhase">
+		<method name="startGamePhase">
 			<return type="void" />
 			<description>
 				Use this to start a game phase. Game phases allow the user to navigate their background recordings and clips. Exactly what a game phase means will vary game to game, but the game phase should be a section of gameplay that is usually between 10 minutes and a few hours in length, and should be the main way a user would think to divide up the game. These are presented to the user in a UI that shows the date the game was played, with one row per game slice. Game phases should be used to mark sections of gameplay that the user might be interested in watching.
@@ -6394,7 +6345,7 @@
 		<method name="startUpdateProperties">
 			<return type="void" />
 			<description>
-				Starts a transaction request to update dynamic properties on items for the current user. This call is rate-limited by user, so property modifications should be batched as much as possible (e.g. at the end of a map or game session). After calling [method Steam.setProperty] or [method Steam.removeProperty] for all the items that you want to modify, you will need to call [method Steam.submitUpdateProperties] to send the request to the Steam servers. A [signal Steam.inventory_result_ready] callback will be fired with the results of the operation.
+				Starts a transaction request to update dynamic properties on items for the current user. This call is rate-limited by user, so property modifications should be batched as much as possible (e.g. at the end of a map or game session). After calling [method Steam.setPropertyBool] or [method Steam.setPropertyFloat] or [method Steam.setPropertyInt] or [method Steam.setPropertyString] or [method Steam.removeProperty] for all the items that you want to modify, you will need to call [method Steam.submitUpdateProperties] to send the request to the Steam servers. A [signal Steam.inventory_result_ready] callback will be fired with the results of the operation.
 			</description>
 		</method>
 		<method name="startVRDashboard">
@@ -6434,7 +6385,7 @@
 			<param index="1" name="app_id" type="int" default="0" />
 			<param index="2" name="embed_callbacks" type="bool" default="false" />
 			<description>
-				Initialize the Steamworks SDK. On success [enum Steam.STEAM_API_INIT_RESULT_OK] is returned.  Otherwise, if error_message is non-NULL, it will receive a non-localized message that explains the reason for the failure.
+				Initialize the Steamworks SDK. On success [enum SteamAPIInitResult] is returned.  Otherwise, if error_message is non-NULL, it will receive a non-localized message that explains the reason for the failure.
 				[codeblock]
 				• 0 / "Steamworks active"
 				• 1 / "Failed (generic)"
@@ -6567,7 +6518,7 @@
 			<param index="0" name="screenshot" type="int" />
 			<param index="1" name="steam_id" type="int" />
 			<description>
-				Tags a Steam user as being visible in the screenshot. You can tag up to the value declared by k_nScreenshotMaxTaggedUsers in a single screenshot. Tagging more users than that will just be discarded. This function has a built in delay before saving the tag which allows you to call it repeatedly for each item. You can get the handle to tag the screenshot once it has been successfully saved from the [signal Steam.screenshot_ready] callback or via the [method Steam.WriteScreenshot], [method Steam.AddScreenshotToLibrary], [method Steam.AddVRScreenshotToLibrary] calls.
+				Tags a Steam user as being visible in the screenshot. You can tag up to the value declared by k_nScreenshotMaxTaggedUsers in a single screenshot. Tagging more users than that will just be discarded. This function has a built in delay before saving the tag which allows you to call it repeatedly for each item. You can get the handle to tag the screenshot once it has been successfully saved from the [signal Steam.screenshot_ready] callback or via the [method Steam.writeScreenshot], [method Steam.addScreenshotToLibrary], [method Steam.addVRScreenshotToLibrary] calls.
 			</description>
 		</method>
 		<method name="terminateGameConnection">
@@ -6725,7 +6676,6 @@
 			<param index="2" name="session_length" type="float" />
 			<description>
 				Updates an AVGRATE stat with new values.
-				You must have called [method Steam.requestCurrentStats] and it needs to return successfully via its callback prior to calling this!
 				This call only modifies Steam's in-memory state and is very cheap. Doing so allows Steam to persist the changes even in the event of a game crash or unexpected shutdown. To submit the stats to the server you must call [method Steam.storeStats].
 				If this is returning false and everything appears correct, then check to ensure that your changes in the App Admin panel of the Steamworks website are published.
 			</description>
@@ -7025,7 +6975,7 @@
 			<param index="1" name="result" type="int" />
 			<param index="2" name="user_id" type="int" />
 			<description>
-				Called when the latest stats and achievements for the local user have been received from the server; in response to function [method Steam.requestCurrentStats]
+				Called when the latest stats and achievements for the local user have been received from the server;
 			</description>
 		</signal>
 		<signal name="dlc_installed">
@@ -7308,7 +7258,7 @@
 			<param index="1" name="title" type="String" />
 			<param index="2" name="initial_file" type="String" />
 			<description>
-				Called when a browser surface has received a file open dialog from a [code]input type="file"[/code] click or similar, you must call [method Steam.fileLoadDialogResponse] with the file(s) the user selected.
+				Called when a browser surface has received a file open dialog from a [code]input type="file"[/code] click or similar.
 			</description>
 		</signal>
 		<signal name="html_finished_request">
@@ -7572,7 +7522,7 @@
 		<signal name="inventory_full_update">
 			<param index="0" name="inventory_handle" type="int" />
 			<description>
-				Triggered when [method Steam.getAllItems] successfully returns a result which is newer / fresher than the last known result. (It will not trigger if the inventory hasn't changed, or if results from two overlapping calls are reversed in flight and the earlier result is already known to be stale/out-of-date.) The regular [method Steam.inventory_result_ready] callback will still be triggered immediately afterwards; this is an additional notification for your convenience.
+				Triggered when [method Steam.getAllItems] successfully returns a result which is newer / fresher than the last known result. (It will not trigger if the inventory hasn't changed, or if results from two overlapping calls are reversed in flight and the earlier result is already known to be stale/out-of-date.) The regular [signal Steam.inventory_result_ready] callback will still be triggered immediately afterwards; this is an additional notification for your convenience.
 			</description>
 		</signal>
 		<signal name="inventory_request_prices_result">
